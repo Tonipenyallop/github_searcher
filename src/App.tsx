@@ -4,7 +4,6 @@ import "./App.css";
 
 function App() {
   const [query, setQuery] = useState("");
-  // debugger;
   const { repositories, error, search, isLoading } = useGitSearch();
   const handleSearch = useCallback(async () => {
     await search(query);
@@ -15,19 +14,27 @@ function App() {
     setQuery(e.target.value);
   }, []);
   return (
-    <div className="">
-      <input type="text" onChange={handleChange} />
-      <button onClick={handleSearch}>fire</button>
+    <div className="app">
+      <div className="header">
+        <h2 className="title">Github Searcher</h2>
+        <div className="input-container">
+          <input className="search-input" type="text" onChange={handleChange} />
+          <button onClick={handleSearch}>SEARCH</button>
+        </div>
+      </div>
       {error}
       {isLoading ? (
-        "LOADING CONTENT"
+        "LOADING CONTENT..."
       ) : (
-        <div className="">
+        <div className="repository-container">
           {repositories.map((repository) => {
             return (
               <div className="">
-                <div className=""> hellow</div>
+                <div className="">{repository.name}</div>
                 <img src={repository.owner?.avatar_url} />
+                <a href={repository.owner?.html_url} target="__blank">
+                  {repository.owner?.html_url}
+                </a>
               </div>
             );
           })}

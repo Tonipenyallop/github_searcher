@@ -8,6 +8,8 @@ export interface Repository {
   owner: {
     login: string;
     avatar_url: string;
+    url: string;
+    html_url: string;
   } | null;
 }
 
