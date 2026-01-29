@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useCallback, useState } from "react";
+import { useGitSearch } from "./hooks";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [query, setQuery] = useState("");
+  // debugger;
+  const { repositories, error, search, isLoading } = useGitSearch();
+  const handleSearch = useCallback(async () => {
+    await search(query);
+  }, [search, query]);
 
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    setQuery(e.target.value);
+  }, []);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="">
+      <input type="text" onChange={handleChange} />
+      <button onClick={handleSearch}>fire</button>
+      {error}
+      {isLoading ? (
+        "LOADING CONTENT"
+      ) : (
+        <div className="">
+          {repositories.map((repository) => {
+            return (
+              <div className="">
+                <div className=""> hellow</div>
+                <img src={repository.owner?.avatar_url} />
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
