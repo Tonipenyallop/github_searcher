@@ -19,7 +19,13 @@ function App() {
         <h2 className="title">Github Searcher</h2>
         <div className="input-container">
           <input className="search-input" type="text" onChange={handleChange} />
-          <button onClick={handleSearch}>SEARCH</button>
+          <button
+            className="search-button"
+            disabled={!query.trim()}
+            onClick={handleSearch}
+          >
+            SEARCH
+          </button>
         </div>
       </div>
       {error}

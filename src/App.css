@@ -10,6 +10,11 @@
   height: 35px;
 }
 
+.search-button:disabled:hover {
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
 .repository-container {
   img {
     width: 100px;
