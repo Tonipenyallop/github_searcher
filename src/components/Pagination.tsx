@@ -15,7 +15,7 @@ const PaginationHelper = ({
   elements,
   handlePagination,
 }: PaginationHelperProps) => {
-  if (curPage < 1) {
+  if (curPage <= 1) {
     return null;
   }
   return elements.map((e) => (
