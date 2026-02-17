@@ -22,3 +22,11 @@ export interface OctokitResponse {
 }
 
 export type Sort = "desc" | "asc";
+
+export interface SearchInput {
+  query: string;
+  sort: Sort;
+  order?: number;
+  per_page: number;
+  page: number;
+}
