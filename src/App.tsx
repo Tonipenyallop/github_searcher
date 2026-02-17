@@ -1,18 +1,44 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGitSearch } from "./hooks";
 import "./App.css";
+import Pagination from "./components/Pagination";
+import type { SearchInput } from "./types/github";
 
 function App() {
   const [query, setQuery] = useState("");
-  const { repositories, error, search, isLoading } = useGitSearch();
+  const [curPage, setCurPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(0);
+  const [lastPage, setLastPage] = useState(0);
+  const { repositories, error, search, isLoading, totalItems } = useGitSearch();
+
+  useEffect(() => {
+    // gotta check max boundary
+    setLastPage(Math.ceil(totalItems / 30 + curPage));
+  }, [totalItems, curPage]);
+
+  useEffect(() => {
+    setItemsPerPage(Math.ceil(totalItems / 10));
+  }, [totalItems]);
+
   const handleSearch = useCallback(async () => {
-    await search(query);
-  }, [search, query]);
+    await search({ query, page: curPage } as SearchInput);
+  }, [search, query, curPage]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
     setQuery(e.target.value);
   }, []);
+
+  const handlePagination = useCallback(
+    async (event: React.MouseEvent<HTMLElement>) => {
+      event.preventDefault();
+      const index = Number((event.target as HTMLElement).innerText ?? "0");
+      setCurPage(index);
+      await handleSearch();
+    },
+    [handleSearch],
+  );
+
   return (
     <div className="app">
       <div className="header">
@@ -45,6 +71,14 @@ function App() {
             );
           })}
         </div>
+      )}
+
+      {repositories.length > 0 && (
+        <Pagination
+          curPage={curPage}
+          lastPage={lastPage}
+          handlePagination={handlePagination}
+        />
       )}
     </div>
   );
