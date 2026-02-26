@@ -2,6 +2,7 @@ interface PaginationProps {
   curPage: number;
   handlePagination: (event: React.MouseEvent<HTMLElement>) => void;
   lastPage: number;
+  totalItems: number;
 }
 
 type PaginationItem = number | "...";
@@ -31,6 +32,7 @@ const Pagination = ({
   curPage,
   handlePagination,
   lastPage,
+  totalItems,
 }: PaginationProps) => {
   return (
     <div className="pagination">
@@ -40,15 +42,15 @@ const Pagination = ({
         handlePagination={handlePagination}
       />
 
-      {Array.from({ length: 5 }).map((_, idx) => {
+      {Array.from({ length: Math.min(5, totalItems) }).map((_, idx) => {
         return (
           <div key={idx} className="child" onClick={handlePagination}>
-            {curPage + idx}
+            {curPage + idx + (curPage <= 1 ? 0 : 1)}
           </div>
         );
       })}
       <PaginationHelper
-        curPage={curPage}
+        curPage={Math.min(curPage, totalItems)}
         elements={["...", lastPage]}
         handlePagination={handlePagination}
       />

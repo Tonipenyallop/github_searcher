@@ -4,6 +4,8 @@ import "./App.css";
 import Pagination from "./components/Pagination";
 import type { SearchInput } from "./types/github";
 
+const DEFAULT_MAX_VAL_PER_PAGE = 30;
+
 function App() {
   const [query, setQuery] = useState("");
   const [curPage, setCurPage] = useState(1);
@@ -13,11 +15,11 @@ function App() {
 
   useEffect(() => {
     // gotta check max boundary
-    setLastPage(Math.ceil(totalItems / 30 + curPage));
+    setLastPage(Math.ceil(totalItems / DEFAULT_MAX_VAL_PER_PAGE + curPage));
   }, [totalItems, curPage]);
 
   useEffect(() => {
-    setItemsPerPage(Math.ceil(totalItems / 10));
+    setItemsPerPage(Math.ceil(totalItems / DEFAULT_MAX_VAL_PER_PAGE));
   }, [totalItems]);
 
   const handleSearch = useCallback(async () => {
@@ -27,6 +29,8 @@ function App() {
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
     setQuery(e.target.value);
+    // reset page when the query updated
+    setCurPage(1);
   }, []);
 
   const handlePagination = useCallback(
@@ -78,6 +82,7 @@ function App() {
           curPage={curPage}
           lastPage={lastPage}
           handlePagination={handlePagination}
+          totalItems={totalItems}
         />
       )}
     </div>

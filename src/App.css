@@ -21,3 +21,21 @@
     height: 100px;
   }
 }
+
+.pagination {
+  display: flex;
+  justify-content: space-around;
+
+  .child {
+    border: 1px solid white;
+    padding: 10px;
+    cursor: pointer;
+
+    &.child-dot {
+      cursor: not-allowed;
+    }
+  }
+  .child:hover {
+    background-color: rgb(65, 64, 64);
+  }
+}
