@@ -44,6 +44,7 @@ export function useGitSearch() {
         setRepositories(response.data.items);
         // Only the first 1000 search results are available - https://docs.github.com/v3/search/
         setTotalItems(Math.min(response.data.total_count, MAX_REPO_AVAILABLE));
+        setError("");
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
