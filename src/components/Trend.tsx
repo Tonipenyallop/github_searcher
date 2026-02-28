@@ -72,13 +72,8 @@ const Trend = () => {
       <Cards
         isLoading={isLoading}
         repositories={trendingRepos.map((repoTuple) => repoTuple[0])}
+        scores={trendingRepos.map((repoTuple) => repoTuple[1])}
       />
-      {/* {trendingRepos.map((repoTuple) => (
-        <div className="">
-          <div className="">{repoTuple[0].name}</div>
-          <div className="">{repoTuple[1]}</div>
-        </div>
-      ))} */}
     </div>
   );
 };
