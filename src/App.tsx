@@ -3,10 +3,14 @@ import { useGitSearch } from "./hooks";
 import "./App.css";
 import Pagination from "./components/Pagination";
 import type { SearchInput } from "./types/github";
+import { useNavigate } from "react-router";
+import Cards from "./components/Cards";
 
 const DEFAULT_MAX_VAL_PER_PAGE = 30;
 
 function App() {
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState("");
   const [curPage, setCurPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(0);
@@ -43,10 +47,15 @@ function App() {
     [handleSearch],
   );
 
+  const handleNavigateTrend = () => {
+    navigate("/trend");
+  };
+
   return (
     <div className="app">
       <div className="header">
         <h2 className="title">Github Searcher</h2>
+        <button onClick={handleNavigateTrend}>TO TREND</button>
         <div className="input-container">
           <input className="search-input" type="text" onChange={handleChange} />
           <button
@@ -59,23 +68,7 @@ function App() {
         </div>
       </div>
       {error}
-      {isLoading ? (
-        "LOADING CONTENT..."
-      ) : (
-        <div className="repository-container">
-          {repositories.map((repository) => {
-            return (
-              <div className="">
-                <div className="">{repository.name}</div>
-                <img src={repository.owner?.avatar_url} />
-                <a href={repository.owner?.html_url} target="__blank">
-                  {repository.owner?.html_url}
-                </a>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <Cards isLoading={isLoading} repositories={repositories} />
 
       {repositories.length > 0 && (
         <Pagination
