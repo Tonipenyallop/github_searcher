@@ -11,6 +11,7 @@ export interface Repository {
     url: string;
     html_url: string;
   } | null;
+  stargazers_count: number;
 }
 
 export interface OctokitResponse {
