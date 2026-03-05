@@ -55,9 +55,11 @@ function App() {
     <div className="app">
       <div className="header">
         <h2 className="title">Github Searcher</h2>
-        <button onClick={handleNavigateTrend}>TO TREND</button>
+        <div className="nav-row">
+          <button className="btn-secondary" onClick={handleNavigateTrend}>TO TREND</button>
+        </div>
         <div className="input-container">
-          <input className="search-input" type="text" onChange={handleChange} />
+          <input className="search-input" type="text" placeholder="Search repositories..." onChange={handleChange} />
           <button
             className="search-button"
             disabled={!query.trim()}
@@ -67,7 +69,7 @@ function App() {
           </button>
         </div>
       </div>
-      {error}
+      {error && <div className="error-message">{error}</div>}
       <Cards isLoading={isLoading} repositories={repositories} />
 
       {repositories.length > 0 && (
