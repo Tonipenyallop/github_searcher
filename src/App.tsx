@@ -51,15 +51,46 @@ function App() {
     navigate("/trend");
   };
 
+  const TIPS = [
+    ["Category", "Example"],
+    ["Popular repos", "stars:>=500 language:typescript"],
+    ["By language", "language:rust forks:>=100"],
+    ["Recently active", " pushed:>2026-01-01 stars:>200"],
+    ["By topic", "topic:machine-learning stars:>50 "],
+    ["Specific scope", `in:readme "getting started"`],
+    ["Size filter", "size:<50 language:go"],
+  ];
+
   return (
     <div className="app">
       <div className="header">
         <h2 className="title">Github Searcher</h2>
         <div className="nav-row">
-          <button className="btn-secondary" onClick={handleNavigateTrend}>TO TREND</button>
+          <button className="btn-secondary" onClick={handleNavigateTrend}>
+            TO TREND
+          </button>
         </div>
+
+        <div className="tips">
+          <h2 className="tip-header">💡TIPS💡</h2>
+          {TIPS.map((tip) => {
+            const [category, example] = tip;
+            return (
+              <div className="tip-container">
+                <div className="category">{category}</div>
+                <div className="example">{example}</div>
+              </div>
+            );
+          })}
+        </div>
+
         <div className="input-container">
-          <input className="search-input" type="text" placeholder="Search repositories..." onChange={handleChange} />
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search repos"
+            onChange={handleChange}
+          />
           <button
             className="search-button"
             disabled={!query.trim()}

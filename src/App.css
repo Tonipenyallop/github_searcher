@@ -2,6 +2,7 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: 24px 32px;
+  /* box-sizing: border-box; */
 }
 
 .header {
@@ -36,6 +37,7 @@
 }
 
 .search-input {
+  width: 100%;
   flex: 1;
   height: 38px;
   padding: 0 12px;
@@ -202,4 +204,31 @@
   background-color: black;
   color: white;
   padding: 10px;
+}
+
+.tips {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.tip-header {
+  text-align: center;
+  color: var(--accent);
+}
+
+.tip-container {
+  display: flex;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--border);
+  justify-content: space-evenly;
+}
+.category {
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
+.example {
+  color: var(--accent);
 }
