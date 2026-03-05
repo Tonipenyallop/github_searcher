@@ -121,14 +121,18 @@ const Trend = () => {
   }
 
   return (
-    <div>
-      Trend
-      <button onClick={handleNavigateHome}>BACK TO HOME</button>
-      <button className="" onClick={handleModeChange}>
-        {mode === "bar" && <p className="">To Card Chart Mode</p>}
-        {mode === "card" && <p className="">To Bar Chart Mode</p>}
-      </button>
-      {error}
+    <div className="trend-page">
+      <div className="trend-header">
+        <h2 className="trend-title">Trending</h2>
+        <div className="trend-controls">
+          <button className="btn-secondary" onClick={handleNavigateHome}>BACK TO HOME</button>
+          <button className="btn-toggle" onClick={handleModeChange}>
+            {mode === "bar" && <span>Card View</span>}
+            {mode === "card" && <span>Chart View</span>}
+          </button>
+        </div>
+      </div>
+      {error && <div className="error-message">{error}</div>}
       {mode === "card" && (
         <Cards
           isLoading={isLoading}
@@ -137,8 +141,8 @@ const Trend = () => {
         />
       )}
       {mode === "bar" && (
-        <div className="">
-          <div className="">Trend Auto Refreshed in Every Minutes</div>
+        <div className="chart-section">
+          <div className="chart-subtitle">Auto-refreshes every minute</div>
           <BarChart data={data ?? []} />
         </div>
       )}
