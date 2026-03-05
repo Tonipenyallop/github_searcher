@@ -43,9 +43,14 @@ const Pagination = ({
       />
 
       {Array.from({ length: Math.min(5, totalItems) }).map((_, idx) => {
+        const pageNum = curPage + idx + (curPage <= 1 ? 0 : 1);
         return (
-          <div key={idx} className="child" onClick={handlePagination}>
-            {curPage + idx + (curPage <= 1 ? 0 : 1)}
+          <div
+            key={idx}
+            className={`child ${pageNum === curPage ? "child-active" : ""}`}
+            onClick={handlePagination}
+          >
+            {pageNum}
           </div>
         );
       })}
