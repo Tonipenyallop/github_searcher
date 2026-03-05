@@ -17,6 +17,7 @@ const Trend = () => {
   const { isLoading, search, repositories, error } = useGitSearch();
   const [trendingRepos, setTrendingRepos] = useState<TrendingRepos>([]);
   const [data, setData] = useState<[[string, number]] | null>(null);
+  const [countDown, setCountDown] = useState<number>(0);
 
   type Mode = "bar" | "card";
 
@@ -85,21 +86,29 @@ const Trend = () => {
     setData(out);
   }
 
-  const ONE_MINUTE = 60 * 1000;
+  const ONE_MINUTE_SECONDS = 60;
+
   useEffect(() => {
     const getTrendingRepos = () => {
-      console.log("one minute passed");
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       const iso = fiveMinutesAgo.toISOString();
       search({ query: `stars:>5000 pushed:>=${iso} forks:>=300` });
     };
 
     getTrendingRepos();
-    const getTrendingReposId = setInterval(() => {
-      getTrendingRepos();
-    }, ONE_MINUTE);
+    setCountDown(ONE_MINUTE_SECONDS);
 
-    return () => clearInterval(getTrendingReposId);
+    const intervalId = setInterval(() => {
+      setCountDown((prev) => {
+        if (prev <= 1) {
+          getTrendingRepos();
+          return ONE_MINUTE_SECONDS;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -125,7 +134,9 @@ const Trend = () => {
       <div className="trend-header">
         <h2 className="trend-title">Trending</h2>
         <div className="trend-controls">
-          <button className="btn-secondary" onClick={handleNavigateHome}>BACK TO HOME</button>
+          <button className="btn-secondary" onClick={handleNavigateHome}>
+            BACK TO HOME
+          </button>
           <button className="btn-toggle" onClick={handleModeChange}>
             {mode === "bar" && <span>Card View</span>}
             {mode === "card" && <span>Chart View</span>}
@@ -142,7 +153,8 @@ const Trend = () => {
       )}
       {mode === "bar" && (
         <div className="chart-section">
-          <div className="chart-subtitle">Auto-refreshes every minute</div>
+          <h2 className="chart-tip">💡Trend Updated Every Minutes💡</h2>
+          <p>{countDown}</p>
           <BarChart data={data ?? []} />
         </div>
       )}
