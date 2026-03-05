@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGitSearch } from "../hooks";
 import type { Repository } from "../types/github";
 import Cards from "./Cards";
 
-const DateISO = new Date().toISOString().split("T")[0];
+import BarChart from "./BarChat";
+
+type TrendingRepos = [Repository, number][];
+
 const Trend = () => {
   const navigate = useNavigate();
   const handleNavigateHome = () => {
@@ -12,9 +15,22 @@ const Trend = () => {
   };
 
   const { isLoading, search, repositories, error } = useGitSearch();
-  const [trendingRepos, setTrendingRepos] = useState<[Repository, number][]>(
-    [],
-  );
+  const [trendingRepos, setTrendingRepos] = useState<TrendingRepos>([]);
+  const [data, setData] = useState<[[string, number]] | null>(null);
+
+  type Mode = "bar" | "card";
+
+  const [mode, setMode] = useState<Mode>("bar");
+
+  const handleModeChange = () => {
+    if (mode === "bar") {
+      setMode("card");
+    } else if (mode === "card") {
+      setMode("bar");
+    } else {
+      throw new Error("Unknown mode found");
+    }
+  };
 
   /*
   0. at least 500 stars
@@ -55,25 +71,77 @@ const Trend = () => {
     setTrendingRepos(sorted);
   }
 
+  function processRepositoryData({
+    trendingRepos,
+  }: ProcessRepositoryDataInput) {
+    const out: [{ repositoryName: string; score: number }] = [];
+    trendingRepos.forEach((trendingRepo) => {
+      out.push({
+        repositoryName: trendingRepo[0].name,
+        score: trendingRepo[1],
+      });
+    });
+
+    setData(out);
+  }
+
+  const ONE_MINUTE = 60 * 1000;
   useEffect(() => {
-    search({ query: `stars:>5000 pushed:>=${DateISO} forks:>=300` });
+    const getTrendingRepos = () => {
+      console.log("one minute passed");
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const iso = fiveMinutesAgo.toISOString();
+      search({ query: `stars:>5000 pushed:>=${iso} forks:>=300` });
+    };
+
+    getTrendingRepos();
+    const getTrendingReposId = setInterval(() => {
+      getTrendingRepos();
+    }, ONE_MINUTE);
+
+    return () => clearInterval(getTrendingReposId);
   }, []);
 
   useEffect(() => {
-    console.log("repositories hheheh s", repositories);
+    if (!repositories) {
+      return;
+    }
     sortRepositoriesByScore(repositories);
   }, [repositories]);
+
+  useEffect(() => {
+    if (!trendingRepos) {
+      return;
+    }
+    processRepositoryData({ trendingRepos });
+  }, [trendingRepos]);
+
+  interface ProcessRepositoryDataInput {
+    trendingRepos: TrendingRepos;
+  }
 
   return (
     <div>
       Trend
       <button onClick={handleNavigateHome}>BACK TO HOME</button>
+      <button className="" onClick={handleModeChange}>
+        {mode === "bar" && <p className="">To Card Chart Mode</p>}
+        {mode === "card" && <p className="">To Bar Chart Mode</p>}
+      </button>
       {error}
-      <Cards
-        isLoading={isLoading}
-        repositories={trendingRepos.map((repoTuple) => repoTuple[0])}
-        scores={trendingRepos.map((repoTuple) => repoTuple[1])}
-      />
+      {mode === "card" && (
+        <Cards
+          isLoading={isLoading}
+          repositories={trendingRepos.map((repoTuple) => repoTuple[0])}
+          scores={trendingRepos.map((repoTuple) => repoTuple[1])}
+        />
+      )}
+      {mode === "bar" && (
+        <div className="">
+          <div className="">Trend Auto Refreshed in Every Minutes</div>
+          <BarChart data={data ?? []} />
+        </div>
+      )}
     </div>
   );
 };
