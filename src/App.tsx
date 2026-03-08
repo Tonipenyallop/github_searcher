@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 import Cards from "./components/Cards";
 
 const DEFAULT_MAX_VAL_PER_PAGE = 30;
+const ENTER_KEY = "Enter";
 
 function App() {
   const navigate = useNavigate();
@@ -29,6 +30,21 @@ function App() {
   const handleSearch = useCallback(async () => {
     await search({ query, page: curPage } as SearchInput);
   }, [search, query, curPage]);
+
+  const handleClickSearch = useCallback(() => {
+    handleSearch();
+  }, [handleSearch]);
+
+  const handleEnterKeySearch = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== ENTER_KEY && event.type !== "click") {
+        return;
+      }
+
+      handleSearch();
+    },
+    [handleSearch],
+  );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
@@ -66,7 +82,7 @@ function App() {
       <div className="header">
         <h2 className="title">Github Searcher</h2>
         <div className="nav-row">
-          <button className="btn-secondary" onClick={handleNavigateTrend}>
+          <button className="" onClick={handleNavigateTrend}>
             TO TREND
           </button>
         </div>
@@ -90,11 +106,12 @@ function App() {
             type="text"
             placeholder="Search repos"
             onChange={handleChange}
+            onKeyDown={handleEnterKeySearch}
           />
           <button
             className="search-button"
             disabled={!query.trim()}
-            onClick={handleSearch}
+            onClick={handleClickSearch}
           >
             SEARCH
           </button>
