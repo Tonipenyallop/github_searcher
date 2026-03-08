@@ -12,8 +12,8 @@ export function useGitSearch() {
   interface SearchInput {
     query: string;
     sort?: Sort;
-    per_page: number;
-    page: number;
+    per_page?: number;
+    page?: number;
   }
   const search = useCallback(
     async ({ query, sort = "stars", per_page = 30, page = 1 }: SearchInput) => {

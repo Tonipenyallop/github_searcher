@@ -8,8 +8,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import type { TrendingData } from "../types/Trend";
+
 interface BarChartProps {
-  data: [[string, number]];
+  data: TrendingData[];
 }
 
 const margin = {

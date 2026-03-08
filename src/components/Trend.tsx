@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGitSearch } from "../hooks";
 import type { Repository } from "../types/github";
+import type { TrendingRepos } from "../types/Trend";
 import Cards from "./Cards";
 
 import BarChart from "./BarChart";
-
-type TrendingRepos = [Repository, number][];
+const ONE_MINUTE_SECONDS = 60;
 
 const Trend = () => {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ const Trend = () => {
   };
 
   const { isLoading, search, repositories, error } = useGitSearch();
-  const [trendingRepos, setTrendingRepos] = useState<TrendingRepos>([]);
-  const [data, setData] = useState<[[string, number]] | null>(null);
-  const [countDown, setCountDown] = useState<number>(0);
+  const [countDown, setCountDown] = useState<number>(ONE_MINUTE_SECONDS);
+
+  const countRef = useRef(ONE_MINUTE_SECONDS);
 
   type Mode = "bar" | "card";
 
@@ -43,7 +43,7 @@ const Trend = () => {
  add filter by languages
 
   */
-  function sortRepositoriesByScore(repositories: Repository[]) {
+  function getSortedRepositoriesByScore(repositories: Repository[]) {
     const MAX_FORK = Math.max(
       ...repositories.map((repo) => repo.forks_count),
       1,
@@ -62,31 +62,30 @@ const Trend = () => {
       const forkScore = (repo.forks_count * FORK_BASE_SCORE) / MAX_FORK;
       const starScore = (repo.stargazers_count * STAR_BASE_SCORE) / MAX_STAR;
       const score = Number(((forkScore + starScore) * 100).toFixed(2));
-      console.log(`score of ${repo.id} is ${score}`);
       scoreMap.set(repo, score);
     }
 
     // sorting by score
-    const sorted = [...scoreMap.entries()].sort((a, b) => b[1] - a[1]);
-    console.log("sorted", sorted);
-    setTrendingRepos(sorted);
+    return [...scoreMap.entries()].sort((a, b) => b[1] - a[1]);
   }
 
-  function processRepositoryData({
-    trendingRepos,
-  }: ProcessRepositoryDataInput) {
-    const out: [{ repositoryName: string; score: number }] = [];
-    trendingRepos.forEach((trendingRepo) => {
-      out.push({
-        repositoryName: trendingRepo[0].name,
-        score: trendingRepo[1],
+  const getProcessedRepositoryData = useCallback(
+    ({ trendingRepos }: ProcessRepositoryDataInput) => {
+      if (!trendingRepos) {
+        return [];
+      }
+      const out: { repositoryName: string; score: number }[] = [];
+      trendingRepos.forEach((trendingRepo) => {
+        out.push({
+          repositoryName: trendingRepo[0].name,
+          score: trendingRepo[1],
+        });
       });
-    });
 
-    setData(out);
-  }
-
-  const ONE_MINUTE_SECONDS = 60;
+      return out;
+    },
+    [],
+  );
 
   useEffect(() => {
     const getTrendingRepos = () => {
@@ -96,34 +95,29 @@ const Trend = () => {
     };
 
     getTrendingRepos();
-    setCountDown(ONE_MINUTE_SECONDS);
 
     const intervalId = setInterval(() => {
-      setCountDown((prev) => {
-        if (prev <= 1) {
-          getTrendingRepos();
-          return ONE_MINUTE_SECONDS;
-        }
-        return prev - 1;
-      });
+      countRef.current -= 1;
+      if (countRef.current <= 0) {
+        getTrendingRepos();
+        countRef.current = ONE_MINUTE_SECONDS;
+      }
+      setCountDown(countRef.current);
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [search]);
 
-  useEffect(() => {
+  const trendingRepos = useMemo(() => {
     if (!repositories) {
-      return;
+      return [];
     }
-    sortRepositoriesByScore(repositories);
+    return getSortedRepositoriesByScore(repositories);
   }, [repositories]);
 
-  useEffect(() => {
-    if (!trendingRepos) {
-      return;
-    }
-    processRepositoryData({ trendingRepos });
-  }, [trendingRepos]);
+  const processedData = useMemo(() => {
+    return getProcessedRepositoryData({ trendingRepos });
+  }, [getProcessedRepositoryData, trendingRepos]);
 
   interface ProcessRepositoryDataInput {
     trendingRepos: TrendingRepos;
@@ -159,7 +153,7 @@ const Trend = () => {
             <h3 className="countdown">{countDown}</h3>
             <h3>s</h3>
           </div>
-          <BarChart data={data ?? []} />
+          <BarChart data={processedData} />
         </div>
       )}
     </div>
