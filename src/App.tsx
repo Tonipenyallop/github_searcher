@@ -15,6 +15,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [curPage, setCurPage] = useState(1);
   const [lastPage, setLastPage] = useState(0);
+  const [hasCalledSearch, setHasCalledSearch] = useState(false);
   const { repositories, error, setError, search, isLoading, totalItems } =
     useGitSearch();
 
@@ -28,7 +29,10 @@ function App() {
       return;
     }
     await search({ query, page: curPage } as SearchInput);
-  }, [setError, search, query, curPage]);
+    if (!hasCalledSearch) {
+      setHasCalledSearch(true);
+    }
+  }, [setError, search, hasCalledSearch, query, curPage]);
 
   const handleClickSearch = useCallback(() => {
     handleSearch();
@@ -121,11 +125,10 @@ function App() {
           curPage={curPage}
           lastPage={lastPage}
           handlePagination={handlePagination}
-          totalItems={totalItems}
         />
       )}
 
-      {!isLoading && totalItems === 0 && (
+      {!isLoading && hasCalledSearch && totalItems === 0 && (
         <h2 className="no-content-text">
           NO CONTENTS FOUND MATE! Try Other Texts
         </h2>
