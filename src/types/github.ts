@@ -22,7 +22,7 @@ export interface OctokitResponse {
   };
 }
 
-export type Sort = "desc" | "asc";
+export type Sort = "stars" | "updated" | "forks" | "help-wanted-issues";
 
 export interface SearchInput {
   query: string;
