@@ -11,12 +11,12 @@ export function useGitSearch() {
   const [totalItems, setTotalItems] = useState(0);
   interface SearchInput {
     query: string;
-    sort: Sort;
+    sort?: Sort;
     per_page: number;
     page: number;
   }
   const search = useCallback(
-    async ({ query, sort = "stars", per_page = 10, page = 1 }: SearchInput) => {
+    async ({ query, sort = "stars", per_page = 30, page = 1 }: SearchInput) => {
       const octokit = new Octokit();
       setIsLoading(true);
       console.log("query", query);

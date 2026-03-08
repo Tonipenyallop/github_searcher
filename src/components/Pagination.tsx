@@ -1,64 +1,77 @@
 interface PaginationProps {
   curPage: number;
-  handlePagination: (event: React.MouseEvent<HTMLElement>) => void;
+  handlePagination: (page: number) => void;
   lastPage: number;
-  totalItems: number;
 }
 
-type PaginationItem = number | "...";
-interface PaginationHelperProps {
-  curPage: number;
-  elements: Array<PaginationItem>;
-  handlePagination: (event: React.MouseEvent<HTMLElement>) => void;
-}
-const PaginationHelper = ({
-  curPage,
-  elements,
-  handlePagination,
-}: PaginationHelperProps) => {
-  if (curPage <= 1) {
-    return null;
-  }
-  return elements.map((e) => (
-    <div
-      className={`child ${e === "..." ? "child-dot" : ""}`}
-      onClick={e === "..." ? () => "" : handlePagination}
-    >
-      {e}
-    </div>
-  ));
-};
+/*
+    can see the 5 window pagination
+    2 + cur page to be centre + 2
+*/
 const Pagination = ({
   curPage,
   handlePagination,
   lastPage,
-  totalItems,
 }: PaginationProps) => {
+  let firstPageInWindow = Math.max(1, curPage - 2);
+  let lastPageInWindow = Math.min(curPage + 2, lastPage);
+
+  if (curPage <= 3) {
+    lastPageInWindow = 5;
+  }
+
+  if (curPage > lastPage - 2) {
+    firstPageInWindow = lastPage - 4;
+  }
+
+  const pages = [];
+  for (let cur = firstPageInWindow; cur <= lastPageInWindow; cur++) {
+    pages.push(cur);
+  }
+
   return (
     <div className="pagination">
-      <PaginationHelper
-        curPage={curPage}
-        elements={[1, "..."]}
-        handlePagination={handlePagination}
-      />
+      {firstPageInWindow > 1 && (
+        <>
+          <div
+            className="child"
+            onClick={() => {
+              handlePagination(1);
+            }}
+          >
+            {1}
+          </div>
+          <div className="child child-dot">...</div>
+        </>
+      )}
 
-      {Array.from({ length: Math.min(5, totalItems) }).map((_, idx) => {
-        const pageNum = curPage + idx + (curPage <= 1 ? 0 : 1);
+      {pages.map((page) => {
         return (
           <div
-            key={idx}
-            className={`child ${pageNum === curPage ? "child-active" : ""}`}
-            onClick={handlePagination}
+            key={`page-${page}`}
+            className={`child ${page === curPage ? "child-active" : ""}`}
+            onClick={() => {
+              handlePagination(page);
+            }}
           >
-            {pageNum}
+            {page}
           </div>
         );
       })}
-      <PaginationHelper
-        curPage={Math.min(curPage, totalItems)}
-        elements={["...", lastPage]}
-        handlePagination={handlePagination}
-      />
+
+      {lastPageInWindow !== lastPage && (
+        <>
+          <div className="child child-dot">...</div>
+          <div
+            className="child"
+            onClick={() => {
+              handlePagination(lastPage);
+            }}
+          >
+            {lastPage}
+          </div>
+        </>
+      )}
     </div>
   );
 };

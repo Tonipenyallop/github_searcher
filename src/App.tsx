@@ -14,27 +14,21 @@ function App() {
 
   const [query, setQuery] = useState("");
   const [curPage, setCurPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(0);
   const [lastPage, setLastPage] = useState(0);
   const { repositories, error, setError, search, isLoading, totalItems } =
     useGitSearch();
 
   useEffect(() => {
-    // gotta check max boundary
-    setLastPage(Math.ceil(totalItems / DEFAULT_MAX_VAL_PER_PAGE + curPage));
-  }, [totalItems, curPage]);
-
-  useEffect(() => {
-    setItemsPerPage(Math.ceil(totalItems / DEFAULT_MAX_VAL_PER_PAGE));
+    setLastPage(Math.ceil(totalItems / DEFAULT_MAX_VAL_PER_PAGE));
   }, [totalItems]);
 
   const handleSearch = useCallback(async () => {
     if (!query.trim()) {
-      setError("Input string should be proved!");
+      setError("Input string should be provided!");
       return;
     }
     await search({ query, page: curPage } as SearchInput);
-  }, [search, query, curPage]);
+  }, [setError, search, query, curPage]);
 
   const handleClickSearch = useCallback(() => {
     handleSearch();
@@ -58,10 +52,8 @@ function App() {
   }, []);
 
   const handlePagination = useCallback(
-    async (event: React.MouseEvent<HTMLElement>) => {
-      event.preventDefault();
-      const index = Number((event.target as HTMLElement).innerText ?? "0");
-      setCurPage(index);
+    async (page: number) => {
+      setCurPage(page);
       await handleSearch();
     },
     [handleSearch],
