@@ -17,11 +17,13 @@ const Pagination = ({
   let lastPageInWindow = Math.min(curPage + 2, lastPage);
 
   if (curPage <= 3) {
-    lastPageInWindow = 5;
+    // handles close to first case(idx,1,2,3)
+    lastPageInWindow = Math.min(5, lastPage);
   }
 
   if (curPage > lastPage - 2) {
-    firstPageInWindow = lastPage - 4;
+    // handles almost end cases(i.e, max = 34, 30,31,32, and so on)
+    firstPageInWindow = Math.max(1, lastPage - 4);
   }
 
   const pages = [];
