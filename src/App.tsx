@@ -132,6 +132,12 @@ function App() {
           totalItems={totalItems}
         />
       )}
+
+      {!isLoading && totalItems === 0 && (
+        <h2 className="no-content-text">
+          NO CONTENTS FOUND MATE! Try Other Texts
+        </h2>
+      )}
     </div>
   );
 }
