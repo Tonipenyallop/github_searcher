@@ -205,6 +205,17 @@
   padding: 10px;
 }
 
+.countdown-container {
+  display: flex;
+  justify-content: center;
+
+  h3 {
+    padding: 0 10px;
+    color: var(--accent);
+    font-size: 1.17em;
+  }
+}
+
 .countdown {
   text-align: center;
   color: var(--accent);

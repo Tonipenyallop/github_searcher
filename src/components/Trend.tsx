@@ -154,7 +154,11 @@ const Trend = () => {
       {mode === "bar" && (
         <div className="chart-section">
           <h2 className="chart-tip">💡Trend Updated Every Minutes💡</h2>
-          <p>{countDown}</p>
+          <div className="countdown-container">
+            <h3>Next Fetch In </h3>
+            <h3 className="countdown">{countDown}</h3>
+            <h3>s</h3>
+          </div>
           <BarChart data={data ?? []} />
         </div>
       )}
