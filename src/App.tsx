@@ -16,7 +16,8 @@ function App() {
   const [curPage, setCurPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(0);
   const [lastPage, setLastPage] = useState(0);
-  const { repositories, error, search, isLoading, totalItems } = useGitSearch();
+  const { repositories, error, setError, search, isLoading, totalItems } =
+    useGitSearch();
 
   useEffect(() => {
     // gotta check max boundary
@@ -28,6 +29,10 @@ function App() {
   }, [totalItems]);
 
   const handleSearch = useCallback(async () => {
+    if (!query.trim()) {
+      setError("Input string should be proved!");
+      return;
+    }
     await search({ query, page: curPage } as SearchInput);
   }, [search, query, curPage]);
 
@@ -47,7 +52,6 @@ function App() {
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setQuery(e.target.value);
     // reset page when the query updated
     setCurPage(1);

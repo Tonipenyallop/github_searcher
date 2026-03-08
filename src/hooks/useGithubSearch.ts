@@ -55,5 +55,6 @@ export function useGitSearch() {
     isLoading,
     repositories,
     totalItems,
+    setError,
   };
 }
