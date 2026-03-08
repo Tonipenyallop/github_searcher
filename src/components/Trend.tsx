@@ -4,7 +4,7 @@ import { useGitSearch } from "../hooks";
 import type { Repository } from "../types/github";
 import Cards from "./Cards";
 
-import BarChart from "./BarChat";
+import BarChart from "./BarChart";
 
 type TrendingRepos = [Repository, number][];
 
@@ -134,7 +134,7 @@ const Trend = () => {
       <div className="trend-header">
         <h2 className="trend-title">Trending</h2>
         <div className="trend-controls">
-          <button className="btn-secondary" onClick={handleNavigateHome}>
+          <button className="" onClick={handleNavigateHome}>
             BACK TO HOME
           </button>
           <button className="btn-toggle" onClick={handleModeChange}>
