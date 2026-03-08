@@ -1,15 +1,17 @@
 # github searcher
 
-- Please make a small app to search GitHub repositories.
+- Created a single page application with
 
-- [x] Use the following API from GitHub: https://docs.github.com/en/rest/reference/search
-- [x] Use TypeScript.
-- [x] Use React.
-- [x] Implement a design in CSS. It can be as simple as you want.
-- [] Implement pagination.
-- [] Implement any feature or use any library that you consider.
+1. Octokit to enable github read methods
+2. Rechart to integrate with chart system
 
-Once completed, please post the app to GitHub and send us the URL.
+# Trending Logic
 
-- Refrain from adding our company name anywhere in your code or comments.
-  Thank you
+1. Runs every minute
+2. Check the range between current time to 5 minutes ago for following conditions
+
+- At least 500 stars for the repository
+- Pushed to the branch within #2 timeframe
+
+3. Score is based on number of stars of repository(70%) and number of forks(30%)(arbitrarily choose the ratio)
+4. Fetch top 10 repositories that matches with above criteria
